@@ -1,8 +1,7 @@
 import App from './app'
 
 const init = () => {
-  const root = document.querySelector('#root')
-  const app = App(root)
+  const app = App()
 
   app.init()
 }
