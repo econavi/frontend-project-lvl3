@@ -3,3 +3,11 @@
 body {
   background-color: rgb(191, 191, 191);
 }
+
+.modal-backdrop {
+  display: none;
+}
+
+.modal-backdrop.show {
+  display: block;
+}
