@@ -11,21 +11,22 @@ const useForm = (state) => {
     feedback: document.querySelector('.feedback')
   }
 
-  const formSchema = object().shape({
-    inputValue: string()
-      .url(t('urlIncorrect'))
-      .notOneOf(
-        Object.values(state.catalog.feeds).map(({ link }) => link),
-        t('urlExist')
-      )
-      .required(t('notEmpty'))
+  const formSchema = object({
+    inputValue: string().url(t('urlIncorrect')).required(t('notEmpty'))
   })
 
   const validateInputValue = (inputValue) => {
     formSchema
       .validate({ inputValue })
-      .then(() => {
-        state.form.error = ''
+      .then((data) => {
+        const loadedFeeds = Object.values(state.catalog.feeds).map((item) => item.requestUrl)
+        const isFeedExist = loadedFeeds.includes(data.inputValue)
+
+        if (isFeedExist) {
+          state.form.error = t('urlExist')
+        } else {
+          state.form.error = ''
+        }
       })
       .catch((error) => {
         const [value] = error.errors
@@ -34,8 +35,9 @@ const useForm = (state) => {
   }
 
   const handleInput = (event) => {
-    const value = event.target.value.trim()
+    const { value } = event.target
     state.form.inputValue = value
+
     validateInputValue(value)
   }
 
