@@ -52,13 +52,16 @@ const handleSubmit = (event) => {
     return
   }
 
-  const path = buildPath(state.form.inputValue)
+  const { inputValue } = state.form
+
+  const path = buildPath(inputValue)
 
   axios
     .get(path)
     .then((rss) => {
       const feedId = uniqueId('feed-')
-      const feed = normolizeFeedData(feedId, rss.data.contents)
+      const requestUrl = inputValue
+      const feed = normolizeFeedData(feedId, rss.data.contents, requestUrl)
       const posts = normolizePostsData(feedId, rss.data.contents)
       state.catalog = {
         ...state.catalog,

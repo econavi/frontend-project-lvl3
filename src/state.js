@@ -9,8 +9,8 @@ const getInitialState = (handler) => {
         error: ''
       },
       catalog: {
-        feeds: [],
-        posts: [],
+        feeds: {},
+        posts: {},
         readedPosts: new Set()
       },
       modal: {

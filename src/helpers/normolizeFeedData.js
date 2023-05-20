@@ -1,4 +1,4 @@
-const normolizeFeedData = (id, data) => {
+const normolizeFeedData = (id, data, requestUrl) => {
   const parser = new DOMParser()
   const feedDoc = parser.parseFromString(data, 'text/xml')
   const feedTitle = feedDoc.querySelector('title')
@@ -6,6 +6,7 @@ const normolizeFeedData = (id, data) => {
   const feedItem = {
     [id]: {
       id,
+      requestUrl,
       title: feedTitle.textContent,
       description: feedDescription.textContent
     }
