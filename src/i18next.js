@@ -7,6 +7,7 @@ i18next.init({
       translation: {
         urlIncorrect: 'Ссылка должна быть валидным URL',
         urlExist: 'RSS уже существует',
+        rssInvalid: 'Ресурс не содержит валидный RSS',
         rssUploaded: 'RSS успешно загружен',
         notEmpty: 'Не должно быть пустым',
         networkError: 'Ошибка сети',

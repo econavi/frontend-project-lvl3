@@ -21,12 +21,19 @@ const useForm = (state) => {
       .then((data) => {
         const loadedFeeds = Object.values(state.catalog.feeds).map((item) => item.requestUrl)
         const isFeedExist = loadedFeeds.includes(data.inputValue)
+        const isRssInvalid = !data.inputValue.endsWith('.rss')
 
         if (isFeedExist) {
           state.form.error = t('urlExist')
-        } else {
-          state.form.error = ''
+          return
         }
+
+        if (isRssInvalid) {
+          state.form.error = t('rssInvalid')
+          return
+        }
+
+        state.form.error = ''
       })
       .catch((error) => {
         const [value] = error.errors
