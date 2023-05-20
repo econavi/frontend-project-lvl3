@@ -17,8 +17,8 @@ const normolizePostsData = (feedId, data) => {
         title: postTitle.textContent,
         description: postDescription.textContent,
         link: postLink.textContent,
-        feedId
-      }
+        feedId,
+      },
     };
   }, {});
 

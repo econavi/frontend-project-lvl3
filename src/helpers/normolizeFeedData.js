@@ -8,8 +8,8 @@ const normolizeFeedData = (id, data, requestUrl) => {
       id,
       requestUrl,
       title: feedTitle.textContent,
-      description: feedDescription.textContent
-    }
+      description: feedDescription.textContent,
+    },
   };
 
   return feedItem;

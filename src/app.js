@@ -66,7 +66,7 @@ const handleSubmit = (event) => {
       state.catalog = {
         ...state.catalog,
         feeds: { ...state.catalog.feeds, ...feed },
-        posts: { ...state.catalog.posts, ...posts }
+        posts: { ...state.catalog.posts, ...posts },
       };
       handleFormProcess('sent');
       subscribeToUpdates(feedId, path, state);

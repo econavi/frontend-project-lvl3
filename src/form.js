@@ -8,11 +8,11 @@ const useForm = (state) => {
     form: document.querySelector('form'),
     input: document.querySelector('#url-input'),
     submit: document.querySelector('button'),
-    feedback: document.querySelector('.feedback')
+    feedback: document.querySelector('.feedback'),
   };
 
   const formSchema = object({
-    inputValue: string().url(t('urlIncorrect')).required(t('notEmpty'))
+    inputValue: string().url(t('urlIncorrect')).required(t('notEmpty')),
   });
 
   const validateInputValue = (inputValue) => {
@@ -89,7 +89,7 @@ const useForm = (state) => {
   return {
     handleFormProcess,
     renderError,
-    form: elements.form
+    form: elements.form,
   };
 };
 

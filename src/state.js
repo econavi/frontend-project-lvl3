@@ -6,21 +6,21 @@ const getInitialState = (handler) => {
       form: {
         process: 'filling',
         inputValue: '',
-        error: ''
+        error: '',
       },
       catalog: {
         feeds: {},
         posts: {},
-        readedPosts: new Set()
+        readedPosts: new Set(),
       },
       modal: {
-        openedPost: null
-      }
+        openedPost: null,
+      },
     },
     (path, value) => handler(path, value, state),
     {
-      isShallow: false
-    }
+      isShallow: false,
+    },
   );
 
   return state;

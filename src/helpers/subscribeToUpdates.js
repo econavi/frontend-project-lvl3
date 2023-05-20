@@ -9,7 +9,7 @@ const subscribeToUpdates = (feedId, path, state) => {
         const posts = normolizePostsData(feedId, rss.data.contents);
         state.catalog = {
           ...state.catalog,
-          posts: { ...state.catalog.posts, ...posts }
+          posts: { ...state.catalog.posts, ...posts },
         };
         subscribeToUpdates(feedId, path, state);
       })

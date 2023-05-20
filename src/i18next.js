@@ -11,10 +11,10 @@ i18next.init({
         rssUploaded: 'RSS успешно загружен',
         notEmpty: 'Не должно быть пустым',
         networkError: 'Ошибка сети',
-        loading: 'Загрузка...'
-      }
-    }
-  }
+        loading: 'Загрузка...',
+      },
+    },
+  },
 });
 
 const useTranslate = () => ({ t: i18next.t });
