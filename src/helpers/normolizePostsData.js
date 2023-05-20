@@ -1,14 +1,14 @@
 const normolizePostsData = (feedId, data) => {
-  const rssParser = new DOMParser()
-  const feedDocument = rssParser.parseFromString(data, 'text/xml')
-  const items = [...feedDocument.querySelectorAll('item')]
+  const rssParser = new DOMParser();
+  const feedDocument = rssParser.parseFromString(data, 'text/xml');
+  const items = [...feedDocument.querySelectorAll('item')];
 
   const posts = items.reduce((acc, post) => {
-    const postTitle = post.querySelector('title')
-    const postDescription = post.querySelector('description')
-    const postLink = post.querySelector('link')
-    const pubDate = post.querySelector('pubDate')
-    const postId = `${feedId}-${Date.parse(pubDate.textContent)}`
+    const postTitle = post.querySelector('title');
+    const postDescription = post.querySelector('description');
+    const postLink = post.querySelector('link');
+    const pubDate = post.querySelector('pubDate');
+    const postId = `${feedId}-${Date.parse(pubDate.textContent)}`;
 
     return {
       ...acc,
@@ -19,10 +19,10 @@ const normolizePostsData = (feedId, data) => {
         link: postLink.textContent,
         feedId
       }
-    }
-  }, {})
+    };
+  }, {});
 
-  return posts
-}
+  return posts;
+};
 
-export default normolizePostsData
+export default normolizePostsData;

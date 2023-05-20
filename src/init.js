@@ -1,9 +1,9 @@
-import App from './app'
+import App from './app';
 
 const init = () => {
-  const app = App()
+  const app = App();
 
-  app.init()
-}
+  app.init();
+};
 
-export default init
+export default init;

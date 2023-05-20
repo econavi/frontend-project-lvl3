@@ -1,4 +1,4 @@
-import onChange from 'on-change'
+import onChange from 'on-change';
 
 const getInitialState = (handler) => {
   const state = onChange(
@@ -21,9 +21,9 @@ const getInitialState = (handler) => {
     {
       isShallow: false
     }
-  )
+  );
 
-  return state
-}
+  return state;
+};
 
-export default getInitialState
+export default getInitialState;

@@ -1,4 +1,4 @@
-import i18next from 'i18next'
+import i18next from 'i18next';
 
 i18next.init({
   lng: 'ru',
@@ -15,8 +15,8 @@ i18next.init({
       }
     }
   }
-})
+});
 
-const useTranslate = () => ({ t: i18next.t })
+const useTranslate = () => ({ t: i18next.t });
 
-export default useTranslate
+export default useTranslate;

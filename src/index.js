@@ -1,4 +1,4 @@
-import init from './init.js'
-import './style.scss'
+import init from './init.js';
+import './style.scss';
 
-init()
+init();
