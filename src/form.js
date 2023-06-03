@@ -48,8 +48,21 @@ const useForm = (state) => {
     validateInputValue(value);
   };
 
+  const renderError = (error) => {
+    if (!error) return;
+
+    elements.input.classList.add('is-invalid');
+    elements.feedback.textContent = error;
+    elements.feedback.classList.remove('text-success');
+    elements.feedback.classList.add('text-danger');
+  };
+
   const handleFormProcess = (process) => {
     switch (process) {
+      case 'error':
+        renderError(state.form.error);
+        break;
+
       case 'filling':
         elements.submit.disabled = false;
         break;
@@ -75,20 +88,10 @@ const useForm = (state) => {
     }
   };
 
-  const renderError = (error) => {
-    if (!error) return;
-
-    elements.input.classList.add('is-invalid');
-    elements.feedback.textContent = error;
-    elements.feedback.classList.remove('text-success');
-    elements.feedback.classList.add('text-danger');
-  };
-
   elements.input.addEventListener('input', handleInput);
 
   return {
     handleFormProcess,
-    renderError,
     form: elements.form,
   };
 };

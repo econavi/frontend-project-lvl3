@@ -1,7 +1,7 @@
 import axios from 'axios';
 import uniqueId from 'lodash/uniqueId';
 
-import catalog from './catalog';
+import renderCatalog from './catalog';
 import useForm from './form';
 import useModal from './modal';
 import useTranslate from './i18next';
@@ -14,19 +14,17 @@ import normolizePostsData from './helpers/normolizePostsData';
 
 const { t } = useTranslate();
 const { openModal } = useModal();
-const renderCatalog = (data, onClick) => catalog(data, onClick);
+
+const getClickHandler = (state) => (postId) => {
+  const newReadedPosts = new Set(state.catalog.readedPosts);
+  newReadedPosts.add(postId);
+  state.catalog.readedPosts = newReadedPosts;
+  state.modal.openedPost = postId;
+};
 
 const handleChangeState = (path, value, state) => {
   if (path === 'catalog') {
-    const handleClick = (postId) => {
-      const newReadedPosts = new Set(state.catalog.readedPosts);
-      newReadedPosts.add(postId);
-      state.catalog.readedPosts = newReadedPosts;
-      state.modal.openedPost = postId;
-      renderCatalog(value, handleClick);
-    };
-
-    renderCatalog(value, handleClick);
+    renderCatalog(value, getClickHandler(state));
   }
 
   if (path === 'modal.openedPost') {
@@ -38,17 +36,18 @@ const handleChangeState = (path, value, state) => {
 
 const state = getInitialState(handleChangeState);
 
-const { handleFormProcess, renderError, form } = useForm(state);
+const { handleFormProcess, form } = useForm(state);
 
 const handleSubmit = (event) => {
   event.preventDefault();
+
   handleFormProcess('sending');
 
   const formError = state.form.error;
 
   if (formError) {
-    renderError(formError);
     handleFormProcess('filling');
+    handleFormProcess('error');
     return;
   }
 
@@ -73,7 +72,7 @@ const handleSubmit = (event) => {
     })
     .catch((error) => {
       console.error(error);
-      renderError(t('networkError'));
+      state.form.error = t('networkError');
     });
 };
 
