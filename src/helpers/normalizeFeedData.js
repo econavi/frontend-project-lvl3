@@ -1,4 +1,6 @@
-const normalizeFeedData = ({ id, title, description, requestUrl }) => {
+const normalizeFeedData = ({
+  id, title, description, requestUrl,
+}) => {
   const feedItem = {
     [id]: {
       id,
