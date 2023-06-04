@@ -1,6 +1,8 @@
 import i18next from 'i18next';
 
-i18next.init({
+const i18nextInstance = i18next.createInstance();
+
+i18nextInstance.init({
   lng: 'ru',
   resources: {
     ru: {
@@ -17,6 +19,6 @@ i18next.init({
   },
 });
 
-const useTranslate = () => ({ t: i18next.t });
+const useTranslate = () => ({ t: i18nextInstance.t });
 
 export default useTranslate;
