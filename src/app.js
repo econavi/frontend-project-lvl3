@@ -8,9 +8,10 @@ import useTranslate from './i18next';
 import getInitialState from './state';
 
 import buildPath from './helpers/buildPath';
+import parseRss from './helpers/parseRss';
 import subscribeToUpdates from './helpers/subscribeToUpdates';
-import normolizeFeedData from './helpers/normolizeFeedData';
-import normolizePostsData from './helpers/normolizePostsData';
+import normalizeFeedData from './helpers/normalizeFeedData';
+import normalizePostsData from './helpers/normalizePostsData';
 
 const { t } = useTranslate();
 const { openModal } = useModal();
@@ -61,13 +62,23 @@ const handleSubmit = (event) => {
     .then((rss) => {
       const feedId = uniqueId('feed-');
       const requestUrl = inputValue;
-      const feed = normolizeFeedData(feedId, rss.data.contents, requestUrl);
-      const posts = normolizePostsData(feedId, rss.data.contents);
+      const parsedFeedData = parseRss(rss);
+
+      const feed = normalizeFeedData({
+        id: feedId,
+        title: parsedFeedData.title,
+        description: parsedFeedData.description,
+        requestUrl,
+      });
+
+      const posts = normalizePostsData(feedId, parsedFeedData.items);
+
       state.catalog = {
         ...state.catalog,
         feeds: { ...state.catalog.feeds, ...feed },
         posts: { ...state.catalog.posts, ...posts },
       };
+
       handleFormProcess('sent');
       subscribeToUpdates(feedId, path, state);
     })

@@ -1,8 +1,4 @@
-const normolizePostsData = (feedId, data) => {
-  const rssParser = new DOMParser();
-  const feedDocument = rssParser.parseFromString(data, 'text/xml');
-  const items = [...feedDocument.querySelectorAll('item')];
-
+const normalizePostsData = (feedId, items) => {
   const posts = items.reduce((acc, post) => {
     const postTitle = post.querySelector('title');
     const postDescription = post.querySelector('description');
@@ -25,4 +21,4 @@ const normolizePostsData = (feedId, data) => {
   return posts;
 };
 
-export default normolizePostsData;
+export default normalizePostsData;
