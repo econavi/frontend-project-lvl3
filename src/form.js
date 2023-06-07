@@ -15,38 +15,31 @@ const useForm = (state) => {
     inputValue: string().url(t('urlIncorrect')).required(t('notEmpty')),
   });
 
-  const validateInputValue = (inputValue) => {
-    formSchema
-      .validate({ inputValue })
-      .then((data) => {
-        const loadedFeeds = Object.values(state.catalog.feeds).map((item) => item.requestUrl);
-        const isFeedExist = loadedFeeds.includes(data.inputValue);
-        const isRssInvalid = !data.inputValue.endsWith('.rss');
+  const validateInputValue = (inputValue) => formSchema
+    .validate({ inputValue })
+    .then((data) => {
+      const loadedFeeds = Object.values(state.catalog.feeds).map(
+        (item) => item.requestUrl,
+      );
+      const isFeedExist = loadedFeeds.includes(data.inputValue);
+      const isRssInvalid = !data.inputValue.endsWith('.rss');
 
-        if (isFeedExist) {
-          state.form.error = t('urlExist');
-          return;
-        }
+      if (isFeedExist) {
+        state.form.error = t('urlExist');
+        return;
+      }
 
-        if (isRssInvalid) {
-          state.form.error = t('rssInvalid');
-          return;
-        }
+      if (isRssInvalid) {
+        state.form.error = t('rssInvalid');
+        return;
+      }
 
-        state.form.error = '';
-      })
-      .catch((error) => {
-        const [value] = error.errors;
-        state.form.error = value;
-      });
-  };
-
-  const handleInput = (event) => {
-    const { value } = event.target;
-    state.form.inputValue = value;
-
-    validateInputValue(value);
-  };
+      state.form.error = '';
+    })
+    .catch((error) => {
+      const [value] = error.errors;
+      state.form.error = value;
+    });
 
   const handleFormProcess = (process) => {
     switch (process) {
@@ -84,10 +77,9 @@ const useForm = (state) => {
     elements.feedback.classList.add('text-danger');
   };
 
-  elements.input.addEventListener('input', handleInput);
-
   return {
     handleFormProcess,
+    validateInputValue,
     renderError,
     form: elements.form,
   };

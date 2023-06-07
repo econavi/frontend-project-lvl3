@@ -39,55 +39,62 @@ const handleChangeState = (path, value, state) => {
 
 const state = getInitialState(handleChangeState);
 
-const { handleFormProcess, renderError, form } = useForm(state);
+const {
+  handleFormProcess, validateInputValue, renderError, form,
+} = useForm(state);
 
 const handleSubmit = (event) => {
   event.preventDefault();
   handleFormProcess('sending');
 
-  const formError = state.form.error;
+  const formData = new FormData(event.target);
+  const inputValue = formData.get('url');
 
-  if (formError) {
-    renderError(formError);
-    handleFormProcess('filling');
-    return;
-  }
+  const validated = validateInputValue(inputValue);
 
-  const { inputValue } = state.form;
+  validated.then(() => {
+    const formError = state.form.error;
 
-  const path = buildPath(inputValue);
-  const feedId = uniqueId('feed-');
+    if (formError) {
+      renderError(formError);
+      handleFormProcess('filling');
+      return;
+    }
 
-  axios
-    .get(path)
-    .then((rss) => {
-      const requestUrl = inputValue;
-      const parsedFeedData = parseRss(rss);
+    const path = buildPath(inputValue);
+    const feedId = uniqueId('feed-');
 
-      const feed = normalizeFeedData({
-        id: feedId,
-        title: parsedFeedData.title,
-        description: parsedFeedData.description,
-        requestUrl,
+    axios
+      .get(path)
+      .then((rss) => {
+        const requestUrl = inputValue;
+        const parsedFeedData = parseRss(rss);
+
+        const feed = normalizeFeedData({
+          id: feedId,
+          title: parsedFeedData.title,
+          description: parsedFeedData.description,
+          requestUrl,
+        });
+
+        const posts = normalizePostsData(feedId, parsedFeedData.items);
+
+        state.catalog = {
+          ...state.catalog,
+          feeds: { ...state.catalog.feeds, ...feed },
+          posts: { ...state.catalog.posts, ...posts },
+        };
+
+        handleFormProcess('sent');
+      })
+      .catch((error) => {
+        console.error(error);
+        renderError(t('networkError'));
+      })
+      .finally(() => {
+        subscribeToUpdates(feedId, path, state);
       });
-
-      const posts = normalizePostsData(feedId, parsedFeedData.items);
-
-      state.catalog = {
-        ...state.catalog,
-        feeds: { ...state.catalog.feeds, ...feed },
-        posts: { ...state.catalog.posts, ...posts },
-      };
-
-      handleFormProcess('sent');
-    })
-    .catch((error) => {
-      console.error(error);
-      renderError(t('networkError'));
-    })
-    .finally(() => {
-      subscribeToUpdates(feedId, path, state);
-    });
+  });
 };
 
 const init = () => {
