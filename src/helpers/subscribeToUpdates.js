@@ -6,7 +6,9 @@ const subscribeToUpdates = (feedId, path, state) => {
     axios
       .get(path)
       .then((rss) => {
-        const posts = normalizePostsData(feedId, rss.data.contents);
+        const parsedFeedData = parseRss(rss);
+        const posts = normalizePostsData(feedId, parsedFeedData.items);
+
         state.catalog = {
           ...state.catalog,
           posts: { ...state.catalog.posts, ...posts },
