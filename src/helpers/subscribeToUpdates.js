@@ -3,7 +3,7 @@ import axios from 'axios';
 import parseRss from './parseRss';
 import normalizePostsData from './normalizePostsData';
 
-const subscribeToUpdates = (feedId, path, state, errorCallback) => {
+const subscribeToUpdates = (feedId, path, state) => {
   setTimeout(() => {
     axios
       .get(path)
@@ -15,11 +15,9 @@ const subscribeToUpdates = (feedId, path, state, errorCallback) => {
           ...state.catalog,
           posts: { ...state.catalog.posts, ...posts },
         };
-        subscribeToUpdates(feedId, path, state);
       })
-      .catch((error) => {
-        console.error(error);
-        errorCallback();
+      .finally(() => {
+        subscribeToUpdates(feedId, path, state);
       });
   }, 5000);
 };

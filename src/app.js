@@ -56,11 +56,11 @@ const handleSubmit = (event) => {
   const { inputValue } = state.form;
 
   const path = buildPath(inputValue);
+  const feedId = uniqueId('feed-');
 
   axios
     .get(path)
     .then((rss) => {
-      const feedId = uniqueId('feed-');
       const requestUrl = inputValue;
       const parsedFeedData = parseRss(rss);
 
@@ -80,14 +80,13 @@ const handleSubmit = (event) => {
       };
 
       handleFormProcess('sent');
-
-      subscribeToUpdates(feedId, path, state, () => {
-        renderError(t('networkError'));
-      });
     })
     .catch((error) => {
       console.error(error);
       renderError(t('networkError'));
+    })
+    .finally(() => {
+      subscribeToUpdates(feedId, path, state);
     });
 };
 
