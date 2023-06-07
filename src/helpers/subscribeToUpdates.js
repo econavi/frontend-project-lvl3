@@ -1,7 +1,9 @@
 import axios from 'axios';
+
+import parseRss from './parseRss';
 import normalizePostsData from './normalizePostsData';
 
-const subscribeToUpdates = (feedId, path, state) => {
+const subscribeToUpdates = (feedId, path, state, errorCallback) => {
   setTimeout(() => {
     axios
       .get(path)
@@ -16,7 +18,8 @@ const subscribeToUpdates = (feedId, path, state) => {
         subscribeToUpdates(feedId, path, state);
       })
       .catch((error) => {
-        console.error('Update fetching has error', error);
+        console.error(error);
+        errorCallback();
       });
   }, 5000);
 };

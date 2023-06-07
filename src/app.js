@@ -80,7 +80,10 @@ const handleSubmit = (event) => {
       };
 
       handleFormProcess('sent');
-      subscribeToUpdates(feedId, path, state);
+
+      subscribeToUpdates(feedId, path, state, () => {
+        renderError(t('networkError'));
+      });
     })
     .catch((error) => {
       console.error(error);
