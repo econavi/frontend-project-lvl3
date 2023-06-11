@@ -5,7 +5,6 @@ const getInitialState = (handler) => {
     {
       form: {
         process: 'filling',
-        inputValue: '',
         error: '',
       },
       catalog: {

@@ -2,7 +2,7 @@ import axios from 'axios';
 import uniqueId from 'lodash/uniqueId';
 import { object, string } from 'yup';
 
-import catalog from './catalog';
+import renderCatalog from './catalog';
 import useModal from './modal';
 import i18nextInitial from './i18next';
 import getInitialState from './state';
@@ -16,19 +16,10 @@ import normalizePostsData from './helpers/normalizePostsData';
 const init = () => {
   i18nextInitial.then((t) => {
     const { openModal } = useModal();
-    const renderCatalog = (data, onClick) => catalog(data, onClick);
 
     const handleChangeState = (path, value, state) => {
-      if (path === 'catalog') { // catalog.readedPosts
-        const handleClick = (postId) => {
-          const newReadedPosts = new Set(state.catalog.readedPosts);
-          newReadedPosts.add(postId);
-          state.catalog.readedPosts = newReadedPosts;
-          state.modal.openedPost = postId;
-          renderCatalog(value, handleClick);
-        };
-
-        renderCatalog(value, handleClick);
+      if (path === 'catalog') {
+        renderCatalog(value);
       }
 
       if (path === 'modal.openedPost') {
@@ -167,7 +158,17 @@ const init = () => {
       });
     };
 
+    const handlePostClick = ({ target }) => {
+      const postId = target.dataset.id;
+
+      if (!postId) return;
+
+      state.modal.openedPost = postId;
+      state.catalog.readedPosts.add(postId);
+    };
+
     elements.form.addEventListener('submit', handleSubmit);
+    elements.catalog.addEventListener('click', handlePostClick);
   });
 };
 

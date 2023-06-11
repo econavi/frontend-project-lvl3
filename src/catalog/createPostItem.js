@@ -1,4 +1,4 @@
-const createPostItem = (postData, readedPosts, onClick) => {
+const createPostItem = (postData, readedPosts) => {
   const { id, title, link } = postData;
   const isReaded = readedPosts.has(id);
 
@@ -20,7 +20,6 @@ const createPostItem = (postData, readedPosts, onClick) => {
   button.dataset.bsToggle = 'modal';
   button.dataset.bsTarget = '#modal';
   button.textContent = 'Просмотр';
-  button.addEventListener('click', onClick(id));
 
   li.append(a, button);
 
