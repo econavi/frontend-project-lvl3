@@ -2,7 +2,7 @@ import i18next from 'i18next';
 
 const i18nextInstance = i18next.createInstance();
 
-i18nextInstance.init({
+const i18nextInitial = i18nextInstance.init({
   lng: 'ru',
   resources: {
     ru: {
@@ -19,6 +19,4 @@ i18nextInstance.init({
   },
 });
 
-const useTranslate = () => ({ t: i18nextInstance.t });
-
-export default useTranslate;
+export default i18nextInitial;
