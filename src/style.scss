@@ -4,10 +4,7 @@ body {
   background-color: rgb(191, 191, 191);
 }
 
-.modal-backdrop {
-  display: none;
-}
-
-.modal-backdrop.show {
-  display: block;
+.text-muted {
+  --bs-text-opacity: 1;
+  color: #6c757d !important;
 }
