@@ -1,4 +1,4 @@
-const createPostItem = (postData, readedPosts) => {
+const createPostItem = (postData, readedPosts, t) => {
   const { id, title, link } = postData;
   const isReaded = readedPosts.has(id);
 
@@ -19,7 +19,7 @@ const createPostItem = (postData, readedPosts) => {
   button.dataset.id = id;
   button.dataset.bsToggle = 'modal';
   button.dataset.bsTarget = '#modal';
-  button.textContent = 'Просмотр';
+  button.textContent = t('catalog_button');
 
   li.append(a, button);
 

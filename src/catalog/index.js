@@ -1,7 +1,7 @@
 import createFeedItem from './createFeedItem';
 import createPostItem from './createPostItem';
 
-const catalog = (data) => {
+const catalog = (data, t) => {
   const feedsData = Object.values(data.feeds);
   const postsData = Object.values(data.posts);
   const { readedPosts } = data;
@@ -13,7 +13,7 @@ const catalog = (data) => {
   postsListContainer.innerHTML = '';
 
   const feeds = feedsData.map((_data) => createFeedItem(_data));
-  const posts = postsData.map((_data) => createPostItem(_data, readedPosts));
+  const posts = postsData.map((_data) => createPostItem(_data, readedPosts, t));
 
   feedsListContainer.append(...feeds);
   postsListContainer.append(...posts);

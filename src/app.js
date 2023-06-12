@@ -53,7 +53,7 @@ const init = () => {
       }
 
       if (path === 'catalog') {
-        renderCatalog(value);
+        renderCatalog(value, t);
       }
 
       if (path === 'modal.openedPost') {

@@ -14,6 +14,7 @@ const i18nextInitial = i18nextInstance.init({
         notEmpty: 'Не должно быть пустым',
         networkError: 'Ошибка сети',
         loading: 'Загрузка...',
+        catalog_button: 'Просмотр',
       },
     },
   },
