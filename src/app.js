@@ -3,7 +3,6 @@ import uniqueId from 'lodash/uniqueId';
 import { object, string } from 'yup';
 
 import renderCatalog from './catalog';
-import useModal from './modal';
 import i18nextInitial from './i18next';
 import getInitialState from './state';
 
@@ -15,8 +14,6 @@ import normalizePostsData from './helpers/normalizePostsData';
 
 const init = () => {
   i18nextInitial.then((t) => {
-    const { openModal } = useModal();
-
     const handleChangeState = (path, value, state, elements) => {
       if (path === 'form.process') {
         switch (value) {
@@ -59,7 +56,13 @@ const init = () => {
       if (path === 'modal.openedPost') {
         const postId = value;
         const postData = state.catalog.posts[postId];
-        if (postData) openModal(postData);
+        const title = elements.modal.querySelector('.modal-title');
+        const description = elements.modal.querySelector('.modal-body');
+        const fullArticleLink = elements.modal.querySelector('.full-article');
+
+        title.textContent = postData.title;
+        description.textContent = postData.description;
+        fullArticleLink.href = postData.link;
       }
 
       if (path === 'error') {
@@ -72,6 +75,7 @@ const init = () => {
 
     const elements = {
       catalog: document.querySelector('[data-list="posts"]'),
+      modal: document.body.querySelector('#modal'),
       form: document.querySelector('form'),
       input: document.querySelector('#url-input'),
       submit: document.querySelector('button'),
