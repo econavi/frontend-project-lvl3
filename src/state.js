@@ -1,6 +1,6 @@
 import onChange from 'on-change';
 
-const getInitialState = (handler) => {
+const getInitialState = (handler, elements) => {
   const state = onChange(
     {
       form: {
@@ -16,7 +16,7 @@ const getInitialState = (handler) => {
         openedPost: null,
       },
     },
-    (path, value) => handler(path, value, state),
+    (path, value) => handler(path, value, state, elements),
     {
       isShallow: false,
     },

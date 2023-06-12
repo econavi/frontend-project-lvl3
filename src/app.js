@@ -17,7 +17,34 @@ const init = () => {
   i18nextInitial.then((t) => {
     const { openModal } = useModal();
 
-    const handleChangeState = (path, value, state) => {
+    const handleChangeState = (path, value, state, elements) => {
+      if (path === 'form.process') {
+        switch (value) {
+          case 'filling':
+            elements.submit.disabled = false;
+            break;
+
+          case 'sending':
+            elements.submit.disabled = true;
+            elements.feedback.textContent = t('loading');
+            elements.feedback.classList.remove('text-danger');
+            elements.feedback.classList.add('text-success');
+            break;
+
+          case 'sent':
+            elements.submit.disabled = false;
+            elements.input.value = '';
+            elements.input.focus();
+            elements.input.classList.remove('is-invalid');
+            elements.feedback.textContent = t('rssUploaded');
+            elements.feedback.classList.remove('text-danger');
+            elements.feedback.classList.add('text-success');
+            break;
+
+          default:
+        }
+      }
+
       if (path === 'catalog') {
         renderCatalog(value);
       }
@@ -29,8 +56,6 @@ const init = () => {
       }
     };
 
-    const state = getInitialState(handleChangeState);
-
     const elements = {
       catalog: document.querySelector('[data-list="posts"]'),
       form: document.querySelector('form'),
@@ -38,6 +63,8 @@ const init = () => {
       submit: document.querySelector('button'),
       feedback: document.querySelector('.feedback'),
     };
+
+    const state = getInitialState(handleChangeState, elements);
 
     const formSchema = object({
       inputValue: string().url(t('urlIncorrect')).required(t('notEmpty')),
@@ -68,33 +95,6 @@ const init = () => {
         state.form.error = value;
       });
 
-    const handleFormProcess = (process) => {
-      switch (process) {
-        case 'filling':
-          elements.submit.disabled = false;
-          break;
-
-        case 'sending':
-          elements.submit.disabled = true;
-          elements.feedback.textContent = t('loading');
-          elements.feedback.classList.remove('text-danger');
-          elements.feedback.classList.add('text-success');
-          break;
-
-        case 'sent':
-          elements.submit.disabled = false;
-          elements.input.value = '';
-          elements.input.focus();
-          elements.input.classList.remove('is-invalid');
-          elements.feedback.textContent = t('rssUploaded');
-          elements.feedback.classList.remove('text-danger');
-          elements.feedback.classList.add('text-success');
-          break;
-
-        default:
-      }
-    };
-
     const renderError = (error) => {
       if (!error) return;
 
@@ -106,19 +106,19 @@ const init = () => {
 
     const handleSubmit = (event) => {
       event.preventDefault();
-      handleFormProcess('sending');
+      state.form.process = 'sending';
 
       const formData = new FormData(event.target);
       const inputValue = formData.get('url');
 
-      const validated = validateInputValue(inputValue);
+      const validatedForm = validateInputValue(inputValue);
 
-      validated.then(() => {
+      validatedForm.then(() => {
         const formError = state.form.error;
 
         if (formError) {
           renderError(formError);
-          handleFormProcess('filling');
+          state.form.process = 'filling';
           return;
         }
 
@@ -146,7 +146,7 @@ const init = () => {
               posts: { ...state.catalog.posts, ...posts },
             };
 
-            handleFormProcess('sent');
+            state.form.process = 'sent';
           })
           .catch((error) => {
             console.error(error);
