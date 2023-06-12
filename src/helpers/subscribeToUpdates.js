@@ -15,6 +15,11 @@ const subscribeToUpdates = (feedId, path, state) => {
           ...state.catalog,
           posts: { ...state.catalog.posts, ...posts },
         };
+
+        state.error = '';
+      })
+      .catch(() => {
+        state.error = 'networkError';
       })
       .finally(() => {
         subscribeToUpdates(feedId, path, state);

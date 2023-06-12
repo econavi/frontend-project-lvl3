@@ -66,10 +66,14 @@ const init = () => {
       }
 
       if (path === 'error') {
-        elements.input.classList.add('is-invalid');
-        elements.feedback.textContent = value;
-        elements.feedback.classList.remove('text-success');
-        elements.feedback.classList.add('text-danger');
+        if (value) {
+          elements.feedback.textContent = t(value);
+          elements.feedback.classList.remove('text-success');
+          elements.feedback.classList.add('text-danger');
+        } else {
+          elements.feedback.textContent = '';
+          elements.feedback.classList.remove('text-danger');
+        }
       }
     };
 
@@ -103,10 +107,7 @@ const init = () => {
 
         if (isRssInvalid) {
           state.form.error = t('rssInvalid');
-          return;
         }
-
-        state.form.error = '';
       })
       .catch((error) => {
         const [value] = error.errors;
