@@ -157,7 +157,7 @@ const init = () => {
             state.form.process = 'sent';
           })
           .catch(() => {
-            state.form.error = 'networkError';
+            state.error = 'networkError';
           })
           .finally(() => {
             subscribeToUpdates(feedId, path, state);
