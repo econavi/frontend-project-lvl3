@@ -45,6 +45,13 @@ const init = () => {
         }
       }
 
+      if (path === 'form.error') {
+        elements.input.classList.add('is-invalid');
+        elements.feedback.textContent = value;
+        elements.feedback.classList.remove('text-success');
+        elements.feedback.classList.add('text-danger');
+      }
+
       if (path === 'catalog') {
         renderCatalog(value);
       }
@@ -53,6 +60,13 @@ const init = () => {
         const postId = value;
         const postData = state.catalog.posts[postId];
         if (postData) openModal(postData);
+      }
+
+      if (path === 'error') {
+        elements.input.classList.add('is-invalid');
+        elements.feedback.textContent = value;
+        elements.feedback.classList.remove('text-success');
+        elements.feedback.classList.add('text-danger');
       }
     };
 
@@ -95,15 +109,6 @@ const init = () => {
         state.form.error = value;
       });
 
-    const renderError = (error) => {
-      if (!error) return;
-
-      elements.input.classList.add('is-invalid');
-      elements.feedback.textContent = error;
-      elements.feedback.classList.remove('text-success');
-      elements.feedback.classList.add('text-danger');
-    };
-
     const handleSubmit = (event) => {
       event.preventDefault();
       state.form.process = 'sending';
@@ -117,7 +122,6 @@ const init = () => {
         const formError = state.form.error;
 
         if (formError) {
-          renderError(formError);
           state.form.process = 'filling';
           return;
         }
@@ -148,9 +152,8 @@ const init = () => {
 
             state.form.process = 'sent';
           })
-          .catch((error) => {
-            console.error(error);
-            renderError(t('networkError'));
+          .catch(() => {
+            state.form.error = 'networkError';
           })
           .finally(() => {
             subscribeToUpdates(feedId, path, state);
