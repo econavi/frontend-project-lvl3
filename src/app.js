@@ -3,7 +3,7 @@ import uniqueId from 'lodash/uniqueId';
 import { object, string } from 'yup';
 
 import renderCatalog from './catalog';
-import i18nextInitial from './i18next';
+import i18nextInit from './i18next';
 import getInitialState from './state';
 
 import buildPath from './helpers/buildPath';
@@ -13,6 +13,8 @@ import normalizeFeedData from './helpers/normalizeFeedData';
 import normalizePostsData from './helpers/normalizePostsData';
 
 const init = () => {
+  const i18nextInitial = i18nextInit();
+
   i18nextInitial.then((t) => {
     const handleChangeState = (path, value, state, elements) => {
       if (path === 'form.process') {
@@ -92,7 +94,8 @@ const init = () => {
       inputValue: string().url(t('urlIncorrect')).required(t('notEmpty')),
     });
 
-    const validateInputValue = (inputValue) => formSchema.validate({ inputValue })
+    const validateInputValue = (inputValue) => formSchema
+      .validate({ inputValue })
       .then((data) => {
         const loadedFeeds = Object.values(state.catalog.feeds).map(
           (item) => item.requestUrl,
