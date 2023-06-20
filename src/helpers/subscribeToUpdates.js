@@ -1,28 +1,46 @@
 import axios from 'axios';
 
+import buildPath from './buildPath';
 import parseRss from './parseRss';
 import normalizePostsData from './normalizePostsData';
 
-const subscribeToUpdates = (feedId, path, state) => {
+const subscribeToUpdates = (state) => {
   setTimeout(() => {
-    axios
-      .get(path)
-      .then((rss) => {
-        const parsedFeedData = parseRss(rss);
-        const posts = normalizePostsData(feedId, parsedFeedData.items);
+    const promises = state.catalog.feeds.map((feed) => axios.get(buildPath(feed.path)));
 
-        state.catalog = {
-          ...state.catalog,
-          posts: { ...state.catalog.posts, ...posts },
-        };
+    Promise.all(promises)
+      .then((response) => {
+        response.forEach((data) => {
+          if (!data.data) return;
 
-        state.error = '';
-      })
-      .catch(() => {
-        state.error = 'networkError';
+          const parsedFeedData = parseRss(data);
+          const { url } = data.data.status;
+
+          const feedId = state.catalog.feeds.find(
+            (feed) => feed.path === url,
+          ).id;
+          const posts = normalizePostsData(feedId, parsedFeedData.items);
+
+          const loadedFeedPostIds = state.catalog.posts
+            .filter((post) => post.feedId === feedId)
+            .map((post) => post.id);
+
+          const newPosts = [];
+
+          posts.forEach((post) => {
+            if (!loadedFeedPostIds.includes(post.id)) {
+              newPosts.push(post);
+            }
+          });
+
+          state.catalog = {
+            ...state.catalog,
+            posts: [...newPosts, ...state.catalog.posts],
+          };
+        });
       })
       .finally(() => {
-        subscribeToUpdates(feedId, path, state);
+        subscribeToUpdates(state);
       });
   }, 5000);
 };

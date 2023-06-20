@@ -9,7 +9,6 @@ import getInitialState from './state';
 import buildPath from './helpers/buildPath';
 import parseRss from './helpers/parseRss';
 import subscribeToUpdates from './helpers/subscribeToUpdates';
-import normalizeFeedData from './helpers/normalizeFeedData';
 import normalizePostsData from './helpers/normalizePostsData';
 
 const init = () => {
@@ -57,7 +56,7 @@ const init = () => {
 
       if (path === 'modal.openedPost') {
         const postId = value;
-        const postData = state.catalog.posts[postId];
+        const postData = state.catalog.posts.find((post) => post.id === postId);
         const title = elements.modal.querySelector('.modal-title');
         const description = elements.modal.querySelector('.modal-body');
         const fullArticleLink = elements.modal.querySelector('.full-article');
@@ -94,29 +93,6 @@ const init = () => {
       inputValue: string().url(t('urlIncorrect')).required(t('notEmpty')),
     });
 
-    const validateInputValue = (inputValue) => formSchema
-      .validate({ inputValue })
-      .then((data) => {
-        const loadedFeeds = Object.values(state.catalog.feeds).map(
-          (item) => item.requestUrl,
-        );
-        const isFeedExist = loadedFeeds.includes(data.inputValue);
-        const isRssInvalid = !data.inputValue.endsWith('.rss');
-
-        if (isFeedExist) {
-          state.form.error = t('urlExist');
-          return;
-        }
-
-        if (isRssInvalid) {
-          state.form.error = t('rssInvalid');
-        }
-      })
-      .catch((error) => {
-        const [value] = error.errors;
-        state.form.error = value;
-      });
-
     const handleSubmit = (event) => {
       event.preventDefault();
       state.form.process = 'sending';
@@ -124,49 +100,59 @@ const init = () => {
       const formData = new FormData(event.target);
       const inputValue = formData.get('url');
 
-      const validatedForm = validateInputValue(inputValue);
+      formSchema
+        .validate({ inputValue })
+        .then((data) => {
+          const loadedFeeds = state.catalog.feeds.map((item) => item.path);
+          const isFeedExist = loadedFeeds.includes(data.inputValue);
+          const isRssInvalid = !data.inputValue.includes('rss');
 
-      validatedForm.then(() => {
-        const formError = state.form.error;
+          if (isFeedExist) {
+            state.form.error = t('urlExist');
+            return;
+          }
 
-        if (formError) {
-          state.form.process = 'filling';
-          return;
-        }
+          if (isRssInvalid) {
+            state.form.error = t('rssInvalid');
+            return;
+          }
 
-        const path = buildPath(inputValue);
-        const feedId = uniqueId('feed-');
+          const path = buildPath(inputValue);
+          const feedId = uniqueId('feed-');
 
-        axios
-          .get(path)
-          .then((rss) => {
-            const requestUrl = inputValue;
-            const parsedFeedData = parseRss(rss);
+          axios
+            .get(path)
+            .then((rss) => {
+              const parsedFeedData = parseRss(rss);
 
-            const feed = normalizeFeedData({
-              id: feedId,
-              title: parsedFeedData.title,
-              description: parsedFeedData.description,
-              requestUrl,
+              const feed = {
+                id: feedId,
+                title: parsedFeedData.title,
+                description: parsedFeedData.description,
+                path: inputValue,
+              };
+
+              const posts = normalizePostsData(feedId, parsedFeedData.items);
+
+              state.catalog = {
+                ...state.catalog,
+                feeds: [feed, ...state.catalog.feeds],
+                posts: [...posts, ...state.catalog.posts],
+              };
+
+              state.form.process = 'sent';
+
+              subscribeToUpdates(state);
+            })
+            .catch(() => {
+              state.error = 'networkError';
+              state.form.process = 'filling';
             });
-
-            const posts = normalizePostsData(feedId, parsedFeedData.items);
-
-            state.catalog = {
-              ...state.catalog,
-              feeds: { ...state.catalog.feeds, ...feed },
-              posts: { ...state.catalog.posts, ...posts },
-            };
-
-            state.form.process = 'sent';
-          })
-          .catch(() => {
-            state.error = 'networkError';
-          })
-          .finally(() => {
-            subscribeToUpdates(feedId, path, state);
-          });
-      });
+        })
+        .catch((error) => {
+          const [value] = error.errors;
+          state.form.error = value;
+        });
     };
 
     const handlePostClick = ({ target }) => {
@@ -175,7 +161,10 @@ const init = () => {
       if (!postId) return;
 
       state.modal.openedPost = postId;
-      state.catalog.readedPosts.add(postId);
+      state.catalog = {
+        ...state.catalog,
+        readedPosts: [...state.catalog.readedPosts, postId],
+      };
     };
 
     elements.form.addEventListener('submit', handleSubmit);

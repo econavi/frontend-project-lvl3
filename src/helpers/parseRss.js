@@ -19,12 +19,12 @@ const parseRss = (rss) => {
     const postLink = post.querySelector('link');
     const pubDate = post.querySelector('pubDate');
 
-    return ({
+    return {
       title: postTitle.textContent,
       description: postDescription.textContent,
       link: postLink.textContent,
       pubDate: pubDate.textContent,
-    });
+    };
   });
 
   return {

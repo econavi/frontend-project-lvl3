@@ -1,10 +1,13 @@
 const createPostItem = (postData, readedPosts, t) => {
   const { id, title, link } = postData;
-  const isReaded = readedPosts.has(id);
+  const isReaded = readedPosts.includes(id);
 
   const li = document.createElement('li');
 
-  li.setAttribute('class', 'list-group-item d-flex justify-content-between align-items-start border-0 border-end-0');
+  li.setAttribute(
+    'class',
+    'list-group-item d-flex justify-content-between align-items-start border-0 border-end-0',
+  );
 
   const a = document.createElement('a');
   a.setAttribute('href', link);

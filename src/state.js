@@ -8,9 +8,9 @@ const getInitialState = (handler, elements) => {
         error: '',
       },
       catalog: {
-        feeds: {},
-        posts: {},
-        readedPosts: new Set(),
+        feeds: [],
+        posts: [],
+        readedPosts: [],
       },
       modal: {
         openedPost: null,

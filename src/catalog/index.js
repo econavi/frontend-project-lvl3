@@ -2,8 +2,8 @@ import createFeedItem from './createFeedItem';
 import createPostItem from './createPostItem';
 
 const catalog = (data, t) => {
-  const feedsData = Object.values(data.feeds);
-  const postsData = Object.values(data.posts);
+  const feedsData = data.feeds;
+  const postsData = data.posts;
   const { readedPosts } = data;
 
   const feedsListContainer = document.querySelector('[data-list="feeds"]');
